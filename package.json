@@ -1,0 +1,25 @@
+{
+  "name": "vuex-dot",
+  "version": "1.0.0",
+  "description": "tools for state mapping with smooth and flexible two way binding support",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yarsky-tgz/vuex-dot.git"
+  },
+  "author": "Yaroslav Dobzhanskij <merlyn.tgz@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yarsky-tgz/vuex-dot/issues"
+  },
+  "homepage": "https://github.com/yarsky-tgz/vuex-dot#readme",
+  "devDependencies": {
+    "tap": "^12.0.1"
+  },
+  "dependencies": {
+    "dot-prop": "^4.2.0"
+  }
+}
