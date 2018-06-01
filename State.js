@@ -9,7 +9,9 @@ class State {
    * @param path
    */
   constructor(path) {
-    this._targetPath = path;
+    this._useState = (path.substr(0, 12) === '$store.state');
+    this._targetPath = this._useState ? path.substr(13) : path;
+    this._targetPath = this._targetPath.length > 0 ? this._targetPath : undefined;
     this._projection = [];
     this._action = null;
     this._dispatcher = null;
@@ -69,7 +71,7 @@ class State {
       this._projection.forEach(field => {
         result[ field ] = {
           get() {
-            return dot.get(this, self._targetPath)[ field ];
+            return dot.get(self._useState ? this.$store.state : this, self._targetPath)[ field ];
           }
         };
         if (self._action) this.hook(this._sendTarget ?
@@ -78,14 +80,14 @@ class State {
           this._sendTarget);
         if (self._dispatcher) result[ field ].set = function (value) {
           const args = [ this.$store, value, field ];
-          if (self._sendTarget) args.push(dot.get(this, self._targetPath));
+          if (self._sendTarget) args.push(dot.get(self._useState ? this.$store.state : this, self._targetPath));
           self._dispatcher.call(this, ...args);
         };
       });
     } else {
       result[ alias ] = {
         get() {
-          return dot.get(this, self._targetPath);
+          return dot.get(self._useState ? this.$store.state : this, self._targetPath);
         }
       };
       if (self._action) this.hook(({ dispatch }, value) => dispatch(self._action, value));

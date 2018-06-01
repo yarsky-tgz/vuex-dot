@@ -1,10 +1,10 @@
 {
   "name": "vuex-dot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tools for state mapping with smooth and flexible two way binding support",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "tap --coverage test/*.js"
   },
   "repository": {
     "type": "git",
