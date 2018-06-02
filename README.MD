@@ -19,7 +19,7 @@ npm i vuex-dot
   
   export default {
     computed: {
-      ...take('$store.state.wizard.step')
+      ...take('$store.target.wizard.step')
         .map('step')
     }
   }
@@ -37,7 +37,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.state.wizard.step')
+      ...take('$store.target.wizard.step')
         .dispatch('setWizardStep')
         .map('step')
     }
@@ -60,7 +60,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.state.user')
+      ...take('$store.target.user')
         .expose(['name', 'email'])
         .dispatch('editUser')
         .map()
@@ -86,7 +86,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.state.user')
+      ...take('$store.target.user')
         .expose(['name', 'email'])
         .hook(({ dispatch }, value, key) => {
           if(validate.single(value, constraints[key])) {
@@ -101,49 +101,49 @@ npm i vuex-dot
 
 ## API reference
 
-* [take(path)](#take) ⇒ [<code>State</code>](#State)
-* [State](#State)
-    * [new State(path)](#new_State_new)
-    * [.expose(projection)](#State+expose) ⇒ [<code>State</code>](#State)
-    * [.dispatch(action, sendTarget)](#State+dispatch) ⇒ [<code>State</code>](#State)
-    * [.hook(dispatcher, sendTarget)](#State+hook) ⇒ [<code>State</code>](#State)
-    * [.map(alias)](#State+map) ⇒ <code>\*</code>
+* [take(path)](#take) ⇒ [<code>Target</code>](#Target)
+* [Target](#Target)
+    * [new Target(path)](#new_Target_new)
+    * [.expose(projection)](#Target+expose) ⇒ [<code>Target</code>](#Target)
+    * [.dispatch(action, sendTarget)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
+    * [.hook(dispatcher, sendTarget)](#Target+hook) ⇒ [<code>Target</code>](#Target)
+    * [.map(alias)](#Target+map) ⇒ <code>\*</code>
     
 
 <a name="take"></a>
-## take(path) ⇒ <code>State</code>
-returns State instance with specified path
+## take(path) ⇒ <code>Target</code>
+returns Target instance with specified path
 
 | Param | Type | Description |
 | --- | --- | --- |
 | path | <code>string</code> | dotted path to target property of your component instance |
 
 
-<a name="new_State_new"></a>
+<a name="new_Target_new"></a>
 
-### new State(path)
-State constructor
+### new Target(path)
+Target constructor
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | path | <code>string</code> | property path |
 
-<a name="State+expose"></a>
+<a name="Target+expose"></a>
 
-### state.expose(projection) ⇒ [<code>State</code>](#State)
+### target.expose(projection) ⇒ [<code>Target</code>](#Target)
 Expose target fields into result map.
 Target shall not be present at the result map if non-empty array passed
 
-**Kind**: instance method of [<code>State</code>](#State)
+**Kind**: instance method of [<code>Target</code>](#Target)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | projection | <code>array</code> | fields to be exposed |
 
-<a name="State+dispatch"></a>
+<a name="Target+dispatch"></a>
 
-### state.dispatch(action, sendTarget) ⇒ [<code>State</code>](#State)
+### target.dispatch(action, sendTarget) ⇒ [<code>Target</code>](#Target)
 Setting value to target or any of exposed fields shall dispatch specified action on store.
 For not exposed target on value change it should run:
 dispatch(action, newValue);
@@ -152,31 +152,31 @@ dispatch(action, {[fieldName]: newValue});
 For exposed field, if sendTarget set to true:
 dispatch(action, { key, value, target });
 
-**Kind**: instance method of [<code>State</code>](#State)
+**Kind**: instance method of [<code>Target</code>](#Target)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | action | <code>string</code> | action name |
 | sendTarget | <code>boolean</code> | append target instance to action payload |
 
-<a name="State+hook"></a>
+<a name="Target+hook"></a>
 
-### state.hook(dispatcher, sendTarget) ⇒ [<code>State</code>](#State)
+### target.hook(dispatcher, sendTarget) ⇒ [<code>Target</code>](#Target)
 Set hook that should be run on value change
 
-**Kind**: instance method of [<code>State</code>](#State)
+**Kind**: instance method of [<code>Target</code>](#Target)
 
 | Param | Type |
 | --- | --- |
 | dispatcher | <code>function</code> |
 | sendTarget | <code>boolean</code> |
 
-<a name="State+map"></a>
+<a name="Target+map"></a>
 
-### state.map(alias) ⇒ <code>\*</code>
+### target.map(alias) ⇒ <code>\*</code>
 Creates result object construction compatible with computed property of vm
 
-**Kind**: instance method of [<code>State</code>](#State)
+**Kind**: instance method of [<code>Target</code>](#Target)
 
 | Param | Type |
 | --- | --- |

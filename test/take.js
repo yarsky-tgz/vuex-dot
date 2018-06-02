@@ -13,7 +13,6 @@ function testField(t, result, field, bindTo, setterExpected) {
 t.test('method chaining', async t => {
   const instance = take('test');
   t.equal(instance.hook(), instance, 'hook returns this');
-  t.equal(instance.expose(), instance, 'expose returns this');
   t.equal(instance.dispatch(), instance, 'dispatch returns this');
 }).catch(t.threw);
 
@@ -28,6 +27,21 @@ t.test('simple target getter', async t => {
     }
   };
   const result = take('long.way.to.field').map('field');
+  testField(t, result, 'field', test, false);
+  t.equal(result.field.get(), 'value', 'getter works as expected');
+});
+
+t.test('simple target getter with empty alias', async t => {
+  const test = {
+    long: {
+      way: {
+        to: {
+          field: 'value'
+        }
+      }
+    }
+  };
+  const result = { field: take('long.way.to.field').map() };
   testField(t, result, 'field', test, false);
   t.equal(result.field.get(), 'value', 'getter works as expected');
 });
@@ -140,6 +154,51 @@ t.test('exposed state target setters with target sending', async t => {
   const result = take('$store.state.user')
     .expose(['name'])
     .dispatch('editUser', true)
+    .map();
+  testField(t, result, 'name', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+});
+
+t.test('exposed state hook test with target send', async t => {
+  const test = {
+    $store: {
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = take('$store.state.user')
+    .expose(['name'])
+    .hook((store, value, key, target) => {
+      t.equal(value, 'Peter', 'right value passed to hook');
+      t.equal(key, 'name', 'right key passed to hook');
+      t.same(target, test.$store.state.user, 'right target passed to hook');
+    }, true)
+    .map();
+  testField(t, result, 'name', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+});
+
+t.test('exposed state hook test', async t => {
+  const test = {
+    $store: {
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = take('$store.state.user')
+    .expose(['name'])
+    .hook((store, value, key) => {
+      t.equal(value, 'Peter', 'right value passed to hook');
+      t.equal(key, 'name', 'right key passed to hook');
+    })
     .map();
   testField(t, result, 'name', test, true);
   t.equal(result.name.get(), 'John', 'name getter works as expected');

@@ -1,8 +1,8 @@
-const State = require('./State');
+const Target = require('./Target');
 /**
- * returns State instance with specified path
+ * returns Target instance with specified path
  * @param {string} path dotted path to target property of your component instance
- * @returns {State}
+ * @returns {Target}
  */
-const take = path => new State(path);
+const take = path => new Target(path);
 module.exports = take;
