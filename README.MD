@@ -100,42 +100,34 @@ npm i vuex-dot
 ```
 
 ## API reference
-
-* [take(path)](#take) ⇒ [<code>Target</code>](#Target)
+<a name="Target"></a>
 * [Target](#Target)
     * [new Target(path)](#new_Target_new)
-    * [.expose(projection)](#Target+expose) ⇒ [<code>Target</code>](#Target)
-    * [.dispatch(action, sendTarget)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
-    * [.hook(dispatcher, sendTarget)](#Target+hook) ⇒ [<code>Target</code>](#Target)
-    * [.map(alias)](#Target+map) ⇒ <code>\*</code>
-    
-
-<a name="take"></a>
-## take(path) ⇒ <code>Target</code>
-returns Target instance with specified path
-
-| Param | Type | Description |
-| --- | --- | --- |
-| path | <code>string</code> | dotted path to target property of your component instance |
-
+    * [.expose(projection)](#Target+expose) ⇒ <code>TargetExposition</code>
+    * [.dispatch(action)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
+    * [.hook(dispatcher)](#Target+hook) ⇒ [<code>Target</code>](#Target)
+    * [.map(alias)](#Target+map) ⇒ <code>Object</code>
+* [TargetExposition](#TargetExposition)
+    * [new TargetExposition(target, projection)](#new_TargetExposition_new)
+    * [.dispatch(action, sendTarget)](#TargetExposition+dispatch) ⇒ [<code>TargetExposition</code>](#TargetExposition)
+    * [.hook(dispatcher, sendTarget)](#TargetExposition+hook) ⇒ [<code>TargetExposition</code>](#TargetExposition)
+    * [.map()](#TargetExposition+map) ⇒ <code>Object</code>
 
 <a name="new_Target_new"></a>
 
 ### new Target(path)
-Target constructor
-
 
 | Param | Type | Description |
 | --- | --- | --- |
-| path | <code>string</code> | property path |
+| path | <code>string</code> | dot-notation path to some property of your vm instance |
 
 <a name="Target+expose"></a>
 
-### target.expose(projection) ⇒ [<code>Target</code>](#Target)
-Expose target fields into result map.
-Target shall not be present at the result map if non-empty array passed
-
-**Kind**: instance method of [<code>Target</code>](#Target)
+### target.expose(projection) ⇒ <code>TargetExposition</code>
+Shall be used if you need to map into your computed properties some properties of object,
+selected as target, also with ability to attach action dispatcher or hook callback on each property change.
+Both `dispatch()` and `hook()` can provide also object mapped by Target instance to callee, while setting
+second argument is true (more you can read at their documentation)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -143,42 +135,72 @@ Target shall not be present at the result map if non-empty array passed
 
 <a name="Target+dispatch"></a>
 
-### target.dispatch(action, sendTarget) ⇒ [<code>Target</code>](#Target)
-Setting value to target or any of exposed fields shall dispatch specified action on store.
-For not exposed target on value change it should run:
-dispatch(action, newValue);
-For exposed field:
-dispatch(action, {[fieldName]: newValue});
-For exposed field, if sendTarget set to true:
-dispatch(action, { key, value, target });
+### target.dispatch(action) ⇒ [<code>Target</code>](#Target)
+set action to be dispatched on mapped property change
+if sendTarget is undefined action shall be called in format:
 
-**Kind**: instance method of [<code>Target</code>](#Target)
+dispatch(action, newValue);
 
 | Param | Type | Description |
 | --- | --- | --- |
 | action | <code>string</code> | action name |
-| sendTarget | <code>boolean</code> | append target instance to action payload |
 
 <a name="Target+hook"></a>
 
-### target.hook(dispatcher, sendTarget) ⇒ [<code>Target</code>](#Target)
-Set hook that should be run on value change
-
-**Kind**: instance method of [<code>Target</code>](#Target)
+### target.hook(dispatcher) ⇒ [<code>Target</code>](#Target)
+Set hook that should be run on mapped property change
 
 | Param | Type |
 | --- | --- |
 | dispatcher | <code>function</code> |
-| sendTarget | <code>boolean</code> |
 
 <a name="Target+map"></a>
 
 ### target.map(alias) ⇒ <code>\*</code>
-Creates result object construction compatible with computed property of vm
+returns computed property map of getters or/and setters for specified projection
+If alias is set it can be used with spread (`...take().map()`) with provided alias as computed property name
 
-**Kind**: instance method of [<code>Target</code>](#Target)
+| Param | Type | Description |
+| --- | --- | --- |
+| alias | <code>String</code> | name of computed field target to be accessible |
+
+<a name="new_TargetExposition_new"></a>
+
+### new TargetExposition(target, projection)
 
 | Param | Type |
 | --- | --- |
-| alias | <code>string</code> |
+| target | <code>Target</code> |
+| projection | <code>Array</code> |
 
+<a name="TargetExposition+dispatch"></a>
+
+### targetExposition.dispatch(action, sendTarget) ⇒ [<code>TargetExposition</code>](#TargetExposition)
+set action to be dispatched on exposed field change
+if sendTarget is undefined action shall be called in format:
+
+dispatch(action, {[key_of_exposed_field]: value})
+
+otherwise, if sendTarget is set to true
+
+dispatch(action, { target, key, value})
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| action | <code>String</code> |  |  |
+| sendTarget | <code>Boolean</code> | <code>false</code> | send target to action |
+
+<a name="TargetExposition+hook"></a>
+
+### targetExposition.hook(dispatcher, sendTarget) ⇒ [<code>TargetExposition</code>](#TargetExposition)
+set dispatcher callback
+
+| Param | Type |
+| --- | --- |
+| dispatcher | <code>function</code> |
+| sendTarget | <code>Boolean</code> |
+
+<a name="TargetExposition+map"></a>
+
+### targetExposition.map() ⇒ <code>Object</code>
+generates map of getters or/and setters for specified projection
