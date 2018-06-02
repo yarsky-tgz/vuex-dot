@@ -6,7 +6,7 @@ const dot = require('dot-prop');
 class State {
   /**
    * State constructor
-   * @param path
+   * @param {string} path property path
    */
   constructor(path) {
     this._useState = (path.substr(0, 12) === '$store.state');
@@ -21,7 +21,7 @@ class State {
   /**
    * Expose target fields into result map.
    * Target shall not be present at the result map if non-empty array passed
-   * @param projection Array
+   * @param {array} projection fields to be exposed
    * @returns {State}
    */
   expose(projection = []) {
@@ -37,8 +37,8 @@ class State {
    * dispatch(action, {[fieldName]: newValue});
    * For exposed field, if sendTarget set to true:
    * dispatch(action, { key, value, target });
-   * @param action String Action name
-   * @param sendTarget Boolean Append target instance to action payload
+   * @param {string} action action name
+   * @param {boolean} sendTarget append target instance to action payload
    * @returns {State}
    */
   dispatch(action, sendTarget) {
@@ -49,8 +49,8 @@ class State {
   
   /**
    * Set hook that should be run on value change
-   * @param dispatcher
-   * @param sendTarget
+   * @param {function} dispatcher
+   * @param {boolean} sendTarget
    * @returns {State}
    */
   hook(dispatcher, sendTarget) {
@@ -61,7 +61,7 @@ class State {
   
   /**
    * Creates result object construction compatible with computed property of vm
-   * @param alias
+   * @param {string} alias
    * @returns {*}
    */
   map(alias) {

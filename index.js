@@ -1,7 +1,8 @@
 const State = require('./State');
 /**
- * State fabric
- * @param path
+ * returns State instance with specified path
+ * @param {string} path dotted path to target property of your component instance
  * @returns {State}
  */
-module.exports = path => new State(path);
+const take = path => new State(path);
+module.exports = take;

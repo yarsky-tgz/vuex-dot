@@ -1,6 +1,6 @@
 {
   "name": "vuex-dot",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "tools for state mapping with smooth and flexible two way binding support",
   "main": "index.js",
   "scripts": {
@@ -21,5 +21,14 @@
   },
   "dependencies": {
     "dot-prop": "^4.2.0"
-  }
+  },
+  "keywords": [
+    "vue",
+    "vuex",
+    "v-model",
+    "computed",
+    "setter",
+    "getter",
+    "two-way data binding"
+  ]
 }
