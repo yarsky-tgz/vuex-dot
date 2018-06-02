@@ -29,7 +29,7 @@ npm i vuex-dot
 #### Simple alias two way binding
 ```vue
 <template>
-  <button @click.stop="step = ++step">next</button>
+  <button @click.stop="step++">next</button>
 </template>
 
 <script>
@@ -49,8 +49,10 @@ npm i vuex-dot
 
 ```vue
 <template>
-  <input v-model="name"/>
-  <input v-model="email"/>
+  <form>
+    <input v-model="name"/>
+    <input v-model="email"/>
+  </form>
 </template>
 
 <script>
@@ -71,8 +73,10 @@ npm i vuex-dot
 
 ```vue
 <template>
-  <input v-model="name"/>
-  <input v-model="email"/>
+  <form>
+    <input v-model="name"/>
+    <input v-model="email"/>
+  </form>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 {
   "name": "vuex-dot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "tools for state mapping with smooth and flexible two way binding support",
   "main": "index.js",
   "scripts": {
