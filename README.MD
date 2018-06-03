@@ -1,5 +1,8 @@
 # vuex-dot
 
+Vue computed properties getters and/or setters generator with ability to hook with callback
+or field change to be dispatched via vuex action. 
+
 ## Installation
 
 ```bash
@@ -19,7 +22,7 @@ npm i vuex-dot
   
   export default {
     computed: {
-      ...take('$store.target.wizard.step')
+      ...take('$store.state.target.wizard.step')
         .map('step')
     }
   }
@@ -37,7 +40,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.target.wizard.step')
+      ...take('$store.state.target.wizard.step')
         .dispatch('setWizardStep')
         .map('step')
     }
@@ -60,7 +63,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.target.user')
+      ...take('$store.state.target.user')
         .expose(['name', 'email'])
         .dispatch('editUser')
         .map()
@@ -86,7 +89,7 @@ npm i vuex-dot
 
   export default {
     computed: {
-      ...take('$store.target.user')
+      ...take('$store.state.target.user')
         .expose(['name', 'email'])
         .hook(({ dispatch }, value, key) => {
           if(validate.single(value, constraints[key])) {
@@ -100,10 +103,10 @@ npm i vuex-dot
 ```
 
 ## API reference
-<a name="Target"></a>
+* [take(path)](#take) => [<code>Target</code>](#Target)
 * [Target](#Target)
     * [new Target(path)](#new_Target_new)
-    * [.expose(projection)](#Target+expose) ⇒ <code>TargetExposition</code>
+    * [.expose(projection)](#Target+expose) ⇒ [<code>TargetExposition</code>](#TargetExposition)
     * [.dispatch(action)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
     * [.hook(dispatcher)](#Target+hook) ⇒ [<code>Target</code>](#Target)
     * [.map(alias)](#Target+map) ⇒ <code>Object</code>
@@ -113,17 +116,22 @@ npm i vuex-dot
     * [.hook(dispatcher, sendTarget)](#TargetExposition+hook) ⇒ [<code>TargetExposition</code>](#TargetExposition)
     * [.map()](#TargetExposition+map) ⇒ <code>Object</code>
 
+<a name="Target"></a>
+
+### take(path)
+Creates new [<code>Target</code>](#Target) instance with given `path`
+
 <a name="new_Target_new"></a>
 
 ### new Target(path)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| path | <code>string</code> | dot-notation path to some property of your vm instance |
+| path | <code>string</code> | dot-notation path to some property of your `vm` instance |
 
 <a name="Target+expose"></a>
 
-### target.expose(projection) ⇒ <code>TargetExposition</code>
+### target.expose(projection) ⇒ [<code>TargetExposition</code>](#TargetExposition)
 Shall be used if you need to map into your computed properties some properties of object,
 selected as target, also with ability to attach action dispatcher or hook callback on each property change.
 Both `dispatch()` and `hook()` can provide also object mapped by Target instance to callee, while setting
@@ -156,9 +164,9 @@ Set hook that should be run on mapped property change
 
 <a name="Target+map"></a>
 
-### target.map(alias) ⇒ <code>\*</code>
+### target.map(alias) ⇒ <code>Object</code>
 returns computed property map of getters or/and setters for specified projection
-If alias is set it can be used with spread (`...take().map()`) with provided alias as computed property name
+If alias is set it can be used with spread operator with provided alias as computed property name
 
 | Param | Type | Description |
 | --- | --- | --- |
