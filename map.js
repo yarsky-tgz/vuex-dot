@@ -1,7 +1,14 @@
 const dot = require('get-value');
+/**
+ *
+ * @param subject
+ * @param field
+ * @param sendTarget
+ * @return {{get: (function(): *),set: (function(): *)}}
+ */
 function map(subject, field, sendTarget) {
   const fieldGetter = function () {
-    return dot(this, subject.path)[ field ];
+    return dot(this, subject.path + '.' + field);
   };
   const targetGetter = function () {
     return dot(this, subject.path);

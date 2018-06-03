@@ -27,10 +27,11 @@ class Target {
   }
   
   /**
-   * set action to be dispatched on mapped property change
-   * if sendTarget is undefined action shall be called in format:
+   * In fact that's syntax sugar for `hook()` method.
+   * Sets `action` to be dispatched on mapped property change
+   * `action` shall be called in format:
    *
-   * dispatch(action, newValue);
+   * `dispatch(action, newValue)`
    * @param {string} action action name
    * @returns {Target}
    */
@@ -40,8 +41,9 @@ class Target {
   }
   
   /**
-   * Set hook that should be run on mapped property change
-   * @param {function} dispatcher
+   * Set hook that should be run on mapped property change.
+   * Hook shall be run with such arguments
+   * @param {Target~dispatcher} dispatcher
    * @returns {Target}
    */
   hook(dispatcher) {
@@ -50,8 +52,14 @@ class Target {
   }
   
   /**
+   * @callback Target~dispatcher
+   * @param {Store} store `vuex` store
+   * @param {mixed} value
+   */
+  
+  /**
    * returns computed property map of getters or/and setters for specified projection
-   * If alias is set it can be used with spread (`...take().map()`) with provided alias as computed property name
+   * If alias is set it can be used with spread operator setting provided alias as computed property name
    * @param {String} alias name of computed field target to be accessible
    * @returns {*}
    */

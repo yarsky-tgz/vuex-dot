@@ -1,7 +1,7 @@
 {
   "name": "vuex-dot",
-  "version": "2.0.1",
-  "description": "tools for state mapping with smooth and flexible two way binding support",
+  "version": "2.1.0",
+  "description": "Generator of getters and setters, which allows two-way binding and v-model usage on vuex state",
   "main": "index.js",
   "scripts": {
     "test": "tap --coverage test/*.js"
@@ -23,20 +23,20 @@
     "get-value": "^3.0.1"
   },
   "keywords": [
-    "vue",
     "vuex",
     "v-model",
     "event",
     "update",
-    "on change",
     "change",
+    "input",
+    "form",
     "hook",
     "dispatch",
     "action",
     "computed",
     "setter",
     "getter",
-    "generator",
-    "two-way data binding"
+    "two-way",
+    "data binding"
   ]
 }

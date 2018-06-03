@@ -188,19 +188,23 @@ t.test('exposed state hook test', async t => {
     $store: {
       state: {
         user: {
-          name: 'John'
+          name: 'John',
+          location: {
+            city: 'Odessa'
+          }
         }
       }
     },
   };
   const result = take('$store.state.user')
-    .expose(['name'])
+    .expose(['name', 'location.city'])
     .hook((store, value, key) => {
       t.equal(value, 'Peter', 'right value passed to hook');
       t.equal(key, 'name', 'right key passed to hook');
     })
     .map();
   testField(t, result, 'name', test, true);
+  testField(t, result, 'locationCity', test, true);
   t.equal(result.name.get(), 'John', 'name getter works as expected');
   result.name.set('Peter');
 });

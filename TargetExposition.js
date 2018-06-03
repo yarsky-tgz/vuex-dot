@@ -49,13 +49,24 @@ class TargetExposition {
   }
   
   /**
+   * @callback TargetExposition~dispatcher
+   * @param {Store} store `vuex` store
+   * @param {*} value changed value
+   * @param {String} key key of changed field
+   * @param {*} target parent object of changed field
+   */
+  
+  /**
    * generates map of getters or/and setters for specified projection
    * @return {Object}
    */
   map() {
     const result = {};
     const { target, sendTarget } = this;
-    this.projection.forEach(field => result[field] = map(target, field, sendTarget));
+    this.projection.forEach(field => {
+      let camelCasedField = (field.indexOf('.') === -1) ? field : field.replace(/\.(.)/g, (all, matched) => matched.toUpperCase());
+      result[camelCasedField] = map(target, field, sendTarget);
+    });
     return result;
   }
 }
