@@ -1,7 +1,7 @@
 {
   "name": "vuex-dot",
-  "version": "2.1.1",
-  "description": "Generator of getters and setters, which allows two-way binding and v-model usage on vuex state",
+  "version": "2.1.2",
+  "description": "Simplifies two-way data binding and v-model usage on vuex state, providing full reactivity via generated setters/getters",
   "main": "index.js",
   "scripts": {
     "test": "tap --coverage test/*.js"

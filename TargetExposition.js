@@ -17,14 +17,14 @@ class TargetExposition {
   }
   
   /**
-   * set action to be dispatched on exposed field change
-   * if sendTarget is undefined action shall be called in format:
+   * set `action` to be dispatched on exposed field change
+   * if `sendTarget` is `false` `action` shall be called in format:
    *
-   * dispatch(action, {[key_of_exposed_field]: value})
+   * `dispatch(action, {[key_of_exposed_field]: value})`
    *
-   * otherwise, if sendTarget is set to true
+   * otherwise, if `sendTarget` is set to `true`
    *
-   * dispatch(action, { target, key, value})
+   * `dispatch(action, { target, key, value})`
    *
    * @param {String} action
    * @param {Boolean} sendTarget send target to action
@@ -38,7 +38,7 @@ class TargetExposition {
   
   /**
    * set dispatcher callback
-   * @param {Function} dispatcher
+   * @param {TargetExposition~dispatcher} dispatcher
    * @param {Boolean} sendTarget
    * @return {TargetExposition}
    */

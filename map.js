@@ -1,10 +1,10 @@
 const dot = require('get-value');
 /**
- *
- * @param subject
- * @param field
- * @param sendTarget
- * @return {{get: (function(): *),set: (function(): *)}}
+ * Maps subject (Target or TargetExposition) or some field of it into `vm` compatible getter/setter pair
+ * @param {Target,TargetExposition} subject
+ * @param {String} field
+ * @param {Boolean} sendTarget send
+ * @return {{get: (function(): *), set: (function(): *)}}
  */
 function map(subject, field, sendTarget) {
   const fieldGetter = function () {
