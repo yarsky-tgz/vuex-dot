@@ -1,6 +1,6 @@
 {
   "name": "vuex-dot",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Generator of getters and setters, which allows two-way binding and v-model usage on vuex state",
   "main": "index.js",
   "scripts": {

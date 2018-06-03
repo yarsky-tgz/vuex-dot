@@ -1,4 +1,4 @@
-# vuex-dot
+# vuex-dot [![tests](https://travis-ci.org/yarsky-tgz/vuex-dot.svg?branch=master)](https://travis-ci.org/yarsky-tgz/vuex-dot) [![Coverage Status](https://coveralls.io/repos/github/yarsky-tgz/vuex-dot/badge.svg)](https://coveralls.io/github/yarsky-tgz/vuex-dot)
 
 Vue computed properties getters and/or setters generator with ability to hook with callback
 or field change to be dispatched via vuex action. 
