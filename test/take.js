@@ -1,5 +1,5 @@
 const t = require('tap');
-const take = require('../');
+const { take, takeState } = require('../');
 
 function testField(t, result, field, bindTo, setterExpected) {
   t.type(result[field], 'object', 'field exists');
@@ -64,7 +64,7 @@ t.test('simple target dispatching', async t => {
       }
     }
   };
-  const result = take('$store.state.long.way.to.field')
+  const result = takeState('long/way', 'to.field')
     .dispatch('testAction')
     .map('field');
   testField(t, result, 'field', test, true);
@@ -76,12 +76,14 @@ t.test('exposed target getters', async t => {
   const test = {
     $store: {
       state: {
-        name: 'John',
-        email: 'test@email.com'
+        user: {
+          name: 'John',
+          email: 'test@email.com'
+        }
       }
     }
   };
-  const result = take('$store.state')
+  const result = takeState('user')
     .expose(['name', 'email'])
     .map();
   testField(t, result, 'name', test, false);
@@ -97,13 +99,15 @@ t.test('exposed target setters', async t => {
         t.equal(action, 'editUser', 'right action dispatched');
         t.type(name, 'string', 'right key passed to action');
         t.equal(name, 'Peter', 'right value passed to action');
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
       }
     },
-    user: {
-      name: 'John'
-    }
   };
-  const result = take('user')
+  const result = takeState('user')
     .expose(['name'])
     .dispatch('editUser')
     .map();
@@ -151,7 +155,7 @@ t.test('exposed state target setters with target sending', async t => {
       }
     },
   };
-  const result = take('$store.state.user')
+  const result = takeState('user')
     .expose(['name'])
     .dispatch('editUser', true)
     .map();
@@ -170,7 +174,7 @@ t.test('exposed state hook test with target send', async t => {
       }
     },
   };
-  const result = take('$store.state.user')
+  const result = takeState('user')
     .expose(['name'])
     .hook((store, value, key, target) => {
       t.equal(value, 'Peter', 'right value passed to hook');
@@ -196,7 +200,7 @@ t.test('exposed state hook test', async t => {
       }
     },
   };
-  const result = take('$store.state.user')
+  const result = takeState('user')
     .expose(['name', 'location.city'])
     .hook((store, value, key) => {
       t.equal(value, 'Peter', 'right value passed to hook');

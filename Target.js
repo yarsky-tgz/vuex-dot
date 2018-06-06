@@ -58,7 +58,7 @@ class Target {
    */
   
   /**
-   * returns computed property map of getters or/and setters for specified projection
+   * returns computed property pair of getters or/and setters for specified projection
    * If alias is set it can be used with spread operator setting provided alias as computed property name
    * @param {String} alias name of computed field target to be accessible
    * @returns {*}

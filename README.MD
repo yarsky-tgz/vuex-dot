@@ -5,18 +5,28 @@ property change and execute callback or even dispatch vuex action.
 
 There are some other packages on github - 
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
-[vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading their docs and sources 
-I've decided to create own package from scratch with such benefits
+[vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
+their docs and sources I've decided to create own package from scratch with such benefits
  * **leightweight** 
  * **flexible** - actions dispatching and hooks done in simple and flexible way, giving you ability 
  to inject any logic into setters within your component
  * **simple** - you need to import only one helper method into your code, 
  which provides easy for understanding short set of chainable methods for configuring.
- * **good design** no weird logic ("core" mutations, actions, etc) shall be injected 
+ * **good design** - no weird logic ("core" mutations, actions, etc) shall be injected 
  into your vuex store, no additional setup of `vuex` or `vm` needed, tool just generates getters 
  and setters, which are done with performance on mind.
- * **dot notation** with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
- * **stable** full tests coverage
+ * **dot notation** - with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
+ * **stable** - 100% tests coverage
+
+Main idea of this tool is creation of `mapState` like helper with additional configuring ability. 
+
+Main difference of `takeState` from `mapState` is that you can take only one value per launch. 
+But if you take a complex value, like `user` object you can `expose()` **some** fields from it to
+your `computed` properties. 
+
+`takeState` done such way because in complicated situations, like then you are editing item 
+of arrays and your final mutation need actual item instance, you can send target item to 
+your action. More information: [TargetExposition.dispatch(action, sendTarget)](#TargetExposition+dispatch) 
 
 ## Installation
 
@@ -26,44 +36,53 @@ npm i vuex-dot
 
 ## Usage
 
-#### Simple alias create
+#### State property one way binding (`mapState()` like behavior)
+
+[Target.map(alias)](#Target+map)
 ```vue
 <template>
   <div>{{step}}</div>
 </template>
 
 <script>
-  import take from 'vuex-dot';
+  import { takeState } from 'vuex-dot';
   
   export default {
     computed: {
-      ...take('$store.state.target.wizard.step')
-        .map('step')
+      ...takeState('import.wizard.step')
+        .map('step'),
+      //or
+      ...takeState('import/wizard', 'step')
+        .map('step'),
+      //or
+      step: takeState('import/wizard', step).map()
     }
   }
 </script>
 ```
 
-#### Simple alias two way binding
+#### State property two way binding (with vuex namespaces)
+
+[Target.dispatch(action)](#Target+dispatch)
 ```vue
 <template>
   <button @click.stop="step++">next</button>
 </template>
 
 <script>
-  import take from 'vuex-dot';
+  import { takeState, take } from 'vuex-dot';
 
   export default {
     computed: {
-      ...take('$store.state.target.wizard.step')
-        .dispatch('setWizardStep')
-        .map('step')
+      step: takeState('import/wizard', 'step') 
+        .dispatch('import/wizard/setWizardStep')
+        .map()
     }
   }
 </script>
 ```
 
-#### Exposed target two way binding
+#### State model fields exposition 
 
 ```vue
 <template>
@@ -74,11 +93,11 @@ npm i vuex-dot
 </template>
 
 <script>
-  import take from 'vuex-dot';
+  import { takeState } from 'vuex-dot';
 
   export default {
     computed: {
-      ...take('$store.state.target.user')
+      ...takeState('user')
         .expose(['name', 'email'])
         .dispatch('editUser')
         .map()
@@ -98,14 +117,17 @@ npm i vuex-dot
 </template>
 
 <script>
-  import take from 'vuex-dot';
+  import { takeState } from 'vuex-dot';
   import validate from 'validate';
   const constraints = {name: {presence: true}}; 
 
   export default {
     computed: {
-      ...take('$store.state.target.user')
-        .expose(['name', 'email'])
+      ...takeState('user')
+        .expose([
+          'name', 
+          'email'
+        ])
         .hook(({ dispatch }, value, key) => {
           if(validate.single(value, constraints[key])) {
             dispatch('userEditAction', {[key]: value});
@@ -118,6 +140,7 @@ npm i vuex-dot
 ```
 
 ## API reference
+* [take(path)](#take) => [<code>Target</code>](#new_Target_new)
 * [take(path)](#take) => [<code>Target</code>](#new_Target_new)
 * [Target](#new_Target_new)
     * [new Target(path)](#new_Target_new)
@@ -138,8 +161,15 @@ npm i vuex-dot
 ### take(path)
 Creates new [<code>Target</code>](#Target) instance with given `path`
 
-<a name="new_Target_new"></a>
+<a name="takeState"></a>
 
+### takeState(path)
+Creates new [<code>Target</code>](#Target) instance with given `path` to some of 
+your vuex state properties
+
+
+<a name="new_Target_new"></a>
+<a name="Target"></a>
 ### new Target(path)
 
 | Param | Type | Description |
@@ -193,12 +223,14 @@ If alias is set it can be used with spread operator setting provided alias as co
 
 <a name="Target+expose"></a>
 
-### target.expose(projection) ⇒ <code>TargetExposition</code>
+### target.expose(projection) ⇒ [<code>TargetExposition</code>](#TargetExposition)
 Shall be used if you need to map into your computed properties some properties of object,
 selected as target, also with ability to attach action dispatcher or hook callback on each property change.
 Both `dispatch()` and `hook()` can provide also object mapped by Target instance to callee, while setting
 second argument is true (more you can read at their documentation)
 
+If you use dot notation at field names `your.dot.notated.field` shall be converted to 
+`yourDotNotatedField` computed property.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -206,7 +238,7 @@ second argument is true (more you can read at their documentation)
 
 
 <a name="new_TargetExposition_new"></a>
-
+<a name="TargetExposition"></a>
 ### new TargetExposition(target, projection)
 
 | Param | Type |
@@ -254,7 +286,7 @@ generates map of getters or/and setters for specified projection
 
 | Param | Type | Description |
 | --- | --- | --- |
-| store | <code>Store</code> | `vuex` store |
+| store | <code>[Store](https://vuex.vuejs.org/api/#vuex-store)</code> | `vuex` store |
 | value | <code>\*</code> | changed value |
 | key | <code>String</code> | key of changed field |
-| target | <code>\*</code> | parent object of changed field |
+| target | <code>\*</code> | target object of exposed field |
