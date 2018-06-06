@@ -141,7 +141,7 @@ npm i vuex-dot
 
 ## API reference
 * [take(path)](#take) => [<code>Target</code>](#new_Target_new)
-* [take(path)](#take) => [<code>Target</code>](#new_Target_new)
+* [takeState(path)](#take) => [<code>Target</code>](#new_Target_new)
 * [Target](#new_Target_new)
     * [new Target(path)](#new_Target_new)
     * [.dispatch(action)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
@@ -174,13 +174,15 @@ your vuex state properties
 
 | Param | Type | Description |
 | --- | --- | --- |
-| path | <code>string</code> | dot-notation path to some property of your vm instance |
+| path | <code>string</code> | dot-notation path to some property of your `vm` instance |
 
 <a name="Target+dispatch"></a>
 
 ### target.dispatch(action) ⇒ [<code>Target</code>](#Target)
 In fact that's syntax sugar for `hook()` method.
-Sets `action` to be dispatched on mapped property change
+
+Sets `action` to be dispatched on target property change.
+
 `action` shall be called in format:
 
 `dispatch(action, newValue)`
@@ -193,9 +195,7 @@ Sets `action` to be dispatched on mapped property change
 <a name="Target+hook"></a>
 
 ### target.hook(dispatcher) ⇒ [<code>Target</code>](#Target)
-Set hook that should be run on mapped property change.
-Hook shall be run with such arguments
-
+Set hook that shall run on mapped property change. 
 
 | Param | Type |
 | --- | --- |
@@ -243,7 +243,7 @@ If you use dot notation at field names `your.dot.notated.field` shall be convert
 
 | Param | Type |
 | --- | --- |
-| target | <code>Target</code> |
+| target | [<code>Target</code>](#Target) |
 | projection | <code>Array</code> |
 
 <a name="TargetExposition+dispatch"></a>
@@ -286,7 +286,7 @@ generates map of getters or/and setters for specified projection
 
 | Param | Type | Description |
 | --- | --- | --- |
-| store | <code>[Store](https://vuex.vuejs.org/api/#vuex-store)</code> | `vuex` store |
+| store | [<code>Store</code>](https://vuex.vuejs.org/api/#vuex-store) | `vuex` store |
 | value | <code>\*</code> | changed value |
 | key | <code>String</code> | key of changed field |
 | target | <code>\*</code> | target object of exposed field |
