@@ -16,12 +16,14 @@ function map(subject, field, sendTarget) {
   const result = {
     get: field ? fieldGetter : targetGetter
   };
-  if (subject.action) subject.hook(
+  const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
+  const storeAction = !!subject.action ? subject.action : !!subject.mutation ? subject.mutation : null;
+  if (!!method) subject.hook(
     field ?
       sendTarget ?
-        ({ dispatch }, value, key, target) => dispatch(subject.action, { target, key, value }) : // target sending requested
-        ({ dispatch }, value, key) => dispatch(subject.action, { [ key ]: value }) : // not requested
-      ({ dispatch }, value) => dispatch(subject.action, value)); // just single instance dot-notated property mapped
+        (store, value, key, target) => store[method](storeAction, { target, key, value }) : // target sending requested
+        (store, value, key) => store[method](storeAction, { [ key ]: value }) : // not requested
+      (store, value) => store[method](storeAction, value)); // just single instance dot-notated property mapped
   if (subject.dispatcher) result.set =
     field ?
       sendTarget ?

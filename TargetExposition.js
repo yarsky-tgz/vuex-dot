@@ -17,7 +17,28 @@ class TargetExposition {
   }
   
   /**
-   * set `action` to be dispatched on exposed field change
+   * Sets `mutation` to be commited on exposed field change
+   * if `sendTarget` is `false` `action` shall be called in format:
+   *
+   * `commit(mutation, {[key_of_exposed_field]: value})`
+   *
+   * otherwise, if `sendTarget` is set to `true`
+   *
+   * `commit(mutation, { target, key, value})`
+   *
+   * **Hint**: That's just syntax sugar for `hook()` method.
+   * @param {String} mutation name of mutation
+   * @param {Boolean} sendTarget send target to action
+   * @return {TargetExposition}
+   */
+  commit(mutation, sendTarget = false) {
+    this.target.commit(mutation);
+    this.sendTarget = sendTarget || false;
+    return this;
+  }
+  
+  /**
+   * Sets `action` to be dispatched on exposed field change
    * if `sendTarget` is `false` `action` shall be called in format:
    *
    * `dispatch(action, {[key_of_exposed_field]: value})`
@@ -26,7 +47,8 @@ class TargetExposition {
    *
    * `dispatch(action, { target, key, value})`
    *
-   * @param {String} action
+   * **Hint**: That's just syntax sugar for `hook()` method.
+   * @param {String} action name of action
    * @param {Boolean} sendTarget send target to action
    * @return {TargetExposition}
    */

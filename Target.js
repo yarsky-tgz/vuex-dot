@@ -11,6 +11,7 @@ class Target {
   constructor(path) {
     this.path = path;
     this.action = null;
+    this.mutation = null;
     this.dispatcher = null;
   }
   
@@ -24,6 +25,20 @@ class Target {
    */
   expose(projection) {
     return new TargetExposition(this, projection);
+  }
+  
+  /**
+   * In fact that's syntax sugar for `hook()` method.
+   * Sets `action` to be dispatched on mapped property change
+   * `action` shall be called in format:
+   *
+   * `dispatch(action, newValue)`
+   * @param {string} action action name
+   * @returns {Target}
+   */
+  commit(mutation) {
+    this.mutation = mutation;
+    return this;
   }
   
   /**

@@ -116,6 +116,30 @@ t.test('exposed target setters', async t => {
   result.name.set('Peter');
 });
 
+t.test('exposed target setters commit', async t => {
+  const test = {
+    $store: {
+      commit(mutation, { name }) {
+        t.equal(mutation, 'editUser', 'right action dispatched');
+        t.type(name, 'string', 'right key passed to action');
+        t.equal(name, 'Peter', 'right value passed to action');
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = takeState('user')
+    .expose(['name'])
+    .commit('editUser')
+    .map();
+  testField(t, result, 'name', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+});
+
 t.test('exposed target setters with target sending', async t => {
   const test = {
     $store: {
@@ -158,6 +182,31 @@ t.test('exposed state target setters with target sending', async t => {
   const result = takeState('user')
     .expose(['name'])
     .dispatch('editUser', true)
+    .map();
+  testField(t, result, 'name', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+});
+
+t.test('exposed state target setters  committing with target sending', async t => {
+  const test = {
+    $store: {
+      commit(mutation, { value, key, target }) {
+        t.equal(mutation, 'editUser', 'right action dispatched');
+        t.type(key, 'name', 'right key passed to action');
+        t.equal(value, 'Peter', 'right value passed to action');
+        t.same(target, test.$store.state.user, 'right target passed');
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = takeState('user')
+    .expose(['name'])
+    .commit('editUser', true)
     .map();
   testField(t, result, 'name', test, true);
   t.equal(result.name.get(), 'John', 'name getter works as expected');

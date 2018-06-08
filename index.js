@@ -5,6 +5,12 @@ const Target = require('./Target');
  * @returns {Target}
  */
 const take = path => new Target(path);
+/**
+ * returns Target instance with specified state path
+ * @param namespace
+ * @param path
+ * @return {Target}
+ */
 const takeState = (namespace, path) => {
   if (typeof path === 'undefined') path = namespace;
   else path = `${namespace.replace('/', '.')}.${path}`;
