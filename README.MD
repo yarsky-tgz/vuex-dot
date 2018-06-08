@@ -3,30 +3,29 @@
 Vue computed properties getters and/or setters generator with ability to hook each 
 property change and execute callback or even dispatch vuex action.
 
+Main idea of this tool is creation of `mapState` like helper with ability to set additional 
+configuration. That's why method chaining used. 
+
+Next difference of `takeState` from `mapState` is that you can `take()` (and `map()`) only one value per launch. 
+But if you `take()` a complex value, like object with user data, you can `expose()` **some** fields of it into
+your `computed` properties. It done such way because in complicated situations, like then you 
+are editing item of arrays and your final mutation need actual item instance, you can send 
+target item to your action. More information: [TargetExposition.dispatch(action, sendTarget)](#TargetExposition+dispatch) 
+
+## Motivation
+
 There are some other packages on github - 
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
 [vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
 their docs and sources I've decided to create own package from scratch with such benefits
- * **leightweight** 
- * **flexible** - actions dispatching and hooks done in simple and flexible way, giving you ability 
- to inject any logic into setters within your component
- * **simple** - you need to import only one helper method into your code, 
- which provides easy for understanding short set of chainable methods for configuring.
- * **good design** - no weird logic ("core" mutations, actions, etc) shall be injected 
+ * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities
+ adds to your code one place for handling reactive changes of target.
+ * **simple** - less code footprint with same features. You need to import only one helper method into your code, 
+ which provides short set of chainable methods for configuring.
+ * **no foreign code injection to your state** - no weird logic ("core" mutations, actions, etc) shall be injected 
  into your vuex store, no additional setup of `vuex` or `vm` needed, tool just generates getters 
- and setters, which are done with performance on mind.
+ and setters, which are done with performance on mind. 
  * **dot notation** - with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
- * **stable** - 100% tests coverage
-
-Main idea of this tool is creation of `mapState` like helper with additional configuring ability. 
-
-Main difference of `takeState` from `mapState` is that you can take only one value per launch. 
-But if you take a complex value, like `user` object you can `expose()` **some** fields from it to
-your `computed` properties. 
-
-`takeState` done such way because in complicated situations, like then you are editing item 
-of arrays and your final mutation need actual item instance, you can send target item to 
-your action. More information: [TargetExposition.dispatch(action, sendTarget)](#TargetExposition+dispatch) 
 
 ## Installation
 
