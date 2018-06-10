@@ -1,6 +1,6 @@
 {
   "name": "vuex-dot",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Simplifies two-way data binding and v-model usage on vuex state, providing full reactivity via generated setters/getters",
   "main": "index.js",
   "scripts": {

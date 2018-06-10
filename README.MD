@@ -1,4 +1,4 @@
-# vuex-dot [![tests](https://travis-ci.org/yarsky-tgz/vuex-dot.svg?branch=master)](https://travis-ci.org/yarsky-tgz/vuex-dot) [![Coverage Status](https://coveralls.io/repos/github/yarsky-tgz/vuex-dot/badge.svg)](https://coveralls.io/github/yarsky-tgz/vuex-dot) [![GitHub license](https://img.shields.io/github/license/yarsky-tgz/vuex-dot.svg)](https://github.com/yarsky-tgz/vuex-dot/blob/master/LICENSE)
+# vuex-dot [![tests](https://travis-ci.org/yarsky-tgz/vuex-dot.svg?branch=master)](https://travis-ci.org/yarsky-tgz/vuex-dot) [![Coverage Status](https://coveralls.io/repos/github/yarsky-tgz/vuex-dot/badge.svg)](https://coveralls.io/github/yarsky-tgz/vuex-dot) [![GitHub license](https://img.shields.io/github/license/yarsky-tgz/vuex-dot.svg)](https://github.com/yarsky-tgz/vuex-dot/blob/master/LICENSE) [![minified bundle](https://img.shields.io/github/size/yarsky-tgz/vuex-dot/dist/vuex-dot.min.js.svg)](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js)
 
 Vue computed properties getters and/or setters generator with ability to hook each 
 property change and execute callback or even dispatch vuex action.
@@ -18,6 +18,7 @@ There are some other packages on github -
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
 [vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
 their docs and sources I've decided to create own package from scratch with such benefits
+ * **leightweight** - [2.72KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
  * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities
  adds to your code one place for handling reactive changes of target.
  * **simple** - less code footprint with same features. You need to import only one helper method into your code, 
