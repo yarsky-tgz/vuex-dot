@@ -1,10 +1,12 @@
 {
   "name": "vuex-dot",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "Simplifies two-way data binding and v-model usage on vuex state, providing full reactivity via generated setters/getters",
   "main": "index.js",
   "scripts": {
-    "test": "tap --coverage test/*.js"
+    "test": "tap --coverage test/*.js",
+    "build": "rollup -c",
+    "minify": "minify dist/vuex-dot.js -o dist/vuex-dot.min.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,10 @@
   },
   "homepage": "https://github.com/yarsky-tgz/vuex-dot#readme",
   "devDependencies": {
+    "rollup-plugin-commonjs": "^9.1.3",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup": "^0.60.1",
+    "babel-minify": "^0.4.3",
     "tap": "^12.0.1"
   },
   "dependencies": {
@@ -36,6 +42,8 @@
     "computed",
     "setter",
     "getter",
+    "mutation",
+    "commit",
     "two-way",
     "data binding"
   ]

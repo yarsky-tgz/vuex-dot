@@ -1,5 +1,5 @@
 const t = require('tap');
-const { take, takeState } = require('../');
+const { take, takeState } = require('../dist/vuex-dot.min');
 
 function testField(t, result, field, bindTo, setterExpected) {
   t.type(result[field], 'object', 'field exists');
