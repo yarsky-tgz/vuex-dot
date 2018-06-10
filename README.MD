@@ -38,7 +38,7 @@ npm i vuex-dot
 
 #### State property two way binding (mutation based)
 
-[Codepen example](https://codepen.io/anon/pen/GGraRo)
+[https://codepen.io/anon/pen/GGraRo](https://codepen.io/anon/pen/GGraRo)
 
 [Target.commit(action)](#Target+commit)
 ```vue
@@ -75,6 +75,8 @@ export default new Vuex.Store({
 ```
 
 #### Target selected object fields exposition (action based)
+
+[https://codepen.io/anon/pen/jKyoyZ](https://codepen.io/anon/pen/jKyoyZ)
 
 ```vue
 <template>
