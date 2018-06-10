@@ -38,6 +38,8 @@ npm i vuex-dot
 
 #### State property two way binding (mutation based)
 
+[Codepen example](https://codepen.io/anon/pen/GGraRo)
+
 [Target.commit(action)](#Target+commit)
 ```vue
 <template>
