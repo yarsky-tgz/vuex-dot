@@ -4,9 +4,9 @@
 
 Vue computed properties getters and/or setters generator with the ability to hook each property change and execute callback or even dispatch vuex action.
 
-The main idea of this tool is to create `mapState`-like helper with an ability to set additional configuration. That's why Method Chaining used. 
+The main idea of this tool is to create `mapState()`-like helper with an ability to set additional configuration. That's why Method Chaining used. 
 
-Next difference of `takeState` from `mapState` is that you can `take()` (and `map()`) only one value per launch. 
+Next difference of `takeState()` from `mapState()` is that you can `take()` (and `map()`) only one value per launch. 
 But if you `take()` a complex value, like object with user data, you can `expose()` **some** fields of it into
 your `computed` properties. It did such way because in complicated situations, like when you are editing an item of arrays and your final mutation need actual item instance, you can send target item to your action. More information: [TargetExposition.dispatch(action, sendTarget)](#TargetExposition+dispatch) 
 
@@ -16,11 +16,12 @@ There are some other packages on github -
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
 [vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
 their docs and sources I've decided to create own package from scratch with such benefits
- * **lightweight** - [2.72KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
- * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities adds to your code one place for handling reactive changes of target.
+ * **lightweight** - [3.2KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
+ * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities adds to your code one place for handling reactive changes of target. [Plugins](#Target+use) support gives you full control of your data flow.
  * **simple** - less code footprint with same features. You need to import only one helper method into your code, which provides a short set of chainable methods for configuring.
  * **no foreign code injection to your state** - no weird logic ("core" mutations, actions, etc) shall be injected into your vuex store, no additional setup of `vuex` or `vm` needed. This tool just generates getters and setters, which are done with performance in mind. 
  * **dot notation** - with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
+ * **plugins support** - you can use 
 
 ## Installation
 
@@ -237,6 +238,34 @@ If an alias is set, it can be used with spread operator setting provided alias a
 | Param | Type | Description |
 | --- | --- | --- |
 | alias | <code>String</code> | name of computed field target to be accessible |
+
+<a name="Target+use"></a>
+
+### target.use(plugin) ⇒ [<code>Target</code>](#Target)
+apply plugin to target.
+
+Plugin is described with object, composed in such format: 
+
+```javascript
+{
+  setter: function(key, value, nextSetter) { //setter is mandatory
+    nextSetter(value);
+  },
+  getter: function(key, nextGetter) { //getter is optional
+    return nextGetter(); 
+  },
+  inject: { // optional, here you can describe additional fields, you want to inject into result map
+    $internal: {
+      get() { ... },
+      set(value) { ... }
+    }
+  }
+}
+```
+
+| Param | Type | Description |
+| --- | --- | --- |
+| plugin | <code>Object</code> | Object, describing your plugin |
 
 <a name="Target..dispatcher"></a>
 
