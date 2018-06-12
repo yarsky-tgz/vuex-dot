@@ -134,24 +134,7 @@
    * @return {{get: (function(): *), set: (function(): *)}}
    */
   function map(subject, field, sendTarget) {
-    const fieldGetter = function () {
-      return getValue(this, subject.path + '.' + field);
-    };
-    const targetGetter = function () {
-      return getValue(this, subject.path);
-    };
-    const result = {
-      get: field ? fieldGetter : targetGetter
-    };
-    const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
-    const storeAction = !!subject.action ? subject.action : !!subject.mutation ? subject.mutation : null;
-    if (!!method) subject.hook(
-      field ?
-        sendTarget ?
-          (store, value, key, target) => store[method](storeAction, { target, key, value }) : // target sending requested
-          (store, value, key) => store[method](storeAction, { [ key ]: value }) : // not requested
-        (store, value) => store[method](storeAction, value)); // just single instance dot-notated property mapped
-    if (subject.dispatcher) result.set =
+    const composeSetter = () =>
       field ?
         sendTarget ?
           function (value) {
@@ -163,6 +146,25 @@
         function (value) {
           subject.dispatcher.call(this, this.$store, value);
         };
+    const fieldGetter = function () {
+      return getValue(this, subject.path + '.' + field);
+    };
+    const targetGetter = function () {
+      return getValue(this, subject.path);
+    };
+    const resultGetter = field ? fieldGetter : targetGetter;
+    const result = {
+      get: subject.getterGate ? subject.getterGate(field, resultGetter) : resultGetter
+    };
+    const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
+    const storeAction = !!subject.action ? subject.action : !!subject.mutation ? subject.mutation : null;
+    if (!!method) subject.hook(
+      field ?
+        sendTarget ?
+          (store, value, key, target) => store[method](storeAction, { target, key, value }) : // target sending requested
+          (store, value, key) => store[method](storeAction, { key, value }) : // not requested
+        (store, value) => store[method](storeAction, value)); // just single instance dot-notated property mapped
+    if (subject.dispatcher) result.set = subject.gate ? subject.gate(field, composeSetter()) : composeSetter();
     return result;
   }
   var map_1 = map;
@@ -256,7 +258,13 @@
         let camelCasedField = (field.indexOf('.') === -1) ? field : field.replace(/\.(.)/g, (all, matched) => matched.toUpperCase());
         result[camelCasedField] = map_1(target, field, sendTarget);
       });
+      if (target.inject) Object.assign(result, target.inject);
       return result;
+    }
+    
+    use(plugin) {
+      this.target.use(plugin);
+      return this;
     }
   }
   var TargetExposition_1 = TargetExposition;
@@ -340,7 +348,26 @@
      */
     map(alias) {
       if (!alias) return map_1(this);
-      return { [ alias ]: map_1(this) };
+      return Object.assign({ [ alias ]: map_1(this) }, this.inject || {});
+    }
+    
+    /**
+     * apply plugin
+     *
+     * @param {Object} plugin object, describing your plugin.
+     * @return {Target}
+     */
+    use(plugin) {
+      const makeSetterGate = oldGate => !!oldGate ?
+        (key, setter) => function (value) { plugin.setter(key, value, oldGate(key, setter).bind(this)); } :
+        (key, setter) => function (value) { plugin.setter(key, value, setter.bind(this)); };
+      const makeGetterGate = oldGate => !!oldGate ?
+        (key, getter) => function () { return plugin.getter(key, oldGate(key, getter).bind(this)); } :
+        (key, getter) => function () { return plugin.getter(key, getter.bind(this)); };
+      this.gate = makeSetterGate(this.gate);
+      if (!!plugin.getter) this.getterGate = makeGetterGate(this.getterGate);
+      this.inject = Object.assign({}, plugin.inject, this.inject);
+      return this;
     }
   }
 

@@ -89,7 +89,13 @@ class TargetExposition {
       let camelCasedField = (field.indexOf('.') === -1) ? field : field.replace(/\.(.)/g, (all, matched) => matched.toUpperCase());
       result[camelCasedField] = map(target, field, sendTarget);
     });
+    if (target.inject) Object.assign(result, target.inject);
     return result;
+  }
+  
+  use(plugin) {
+    this.target.use(plugin);
+    return this;
   }
 }
 module.exports = TargetExposition;

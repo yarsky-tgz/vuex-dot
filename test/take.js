@@ -1,5 +1,6 @@
 const t = require('tap');
 const { take, takeState } = require('../');
+const buffer = require('vuex-dot-buffer');
 
 function testField(t, result, field, bindTo, setterExpected) {
   t.type(result[field], 'object', 'field exists');
@@ -95,10 +96,10 @@ t.test('exposed target getters', async t => {
 t.test('exposed target setters', async t => {
   const test = {
     $store: {
-      dispatch(action, { name }) {
+      dispatch(action, { key, value }) {
         t.equal(action, 'editUser', 'right action dispatched');
-        t.type(name, 'string', 'right key passed to action');
-        t.equal(name, 'Peter', 'right value passed to action');
+        t.equal(key, 'name', 'right key passed to action');
+        t.equal(value, 'Peter', 'right value passed to action');
       },
       state: {
         user: {
@@ -119,10 +120,10 @@ t.test('exposed target setters', async t => {
 t.test('exposed target setters commit', async t => {
   const test = {
     $store: {
-      commit(mutation, { name }) {
+      commit(mutation, { key, value }) {
         t.equal(mutation, 'editUser', 'right action dispatched');
-        t.type(name, 'string', 'right key passed to action');
-        t.equal(name, 'Peter', 'right value passed to action');
+        t.equal(key, 'name', 'right key passed to action');
+        t.equal(value, 'Peter', 'right value passed to action');
       },
       state: {
         user: {
@@ -186,6 +187,84 @@ t.test('exposed state target setters with target sending', async t => {
   testField(t, result, 'name', test, true);
   t.equal(result.name.get(), 'John', 'name getter works as expected');
   result.name.set('Peter');
+});
+
+t.test('exposed state target setters with target sending with buffer usage', async t => {
+  const test = {
+    $store: {
+      dispatch(action, { value, key, target }) {
+        t.equal(action, 'editUser', 'right action dispatched');
+        t.type(key, 'name', 'right key passed to action');
+        t.equal(value, 'Peter', 'right value passed to action');
+        t.same(target, test.$store.state.user, 'right target passed');
+        test.$store.state.user[key] = value; //mutation imitated
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = takeState('user')
+    .use(buffer('version'))
+    .expose(['name'])
+    .dispatch('editUser', true)
+    .map();
+  testField(t, result, 'name', test, true);
+  testField(t, result, 'version', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+  t.equal(result.name.get(), 'Peter', 'buffer works as expected');
+  t.equal(test.$store.state.user.name, 'John', 'and actual value unchanged');
+  result.version.set(result.version.get() + 1);
+  t.equal(test.$store.state.user.name, 'Peter', 'value changed only on trigger value change');
+});
+
+
+t.test('exposed state target setters with target sending with buffer and two dumb plugins usage', async t => {
+  const test = {
+    $store: {
+      dispatch(action, { value, key, target }) {
+        t.equal(action, 'editUser', 'right action dispatched');
+        t.type(key, 'name', 'right key passed to action');
+        t.equal(value, 'Peter', 'right value passed to action');
+        t.same(target, test.$store.state.user, 'right target passed');
+        test.$store.state.user[key] = value; //mutation imitated
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = takeState('user')
+    .expose(['name'])
+    .use({
+      setter(key, value, next) {
+        next(value);
+      }
+    })
+    .use(buffer('version'))
+    .use({
+      setter(key, value, next) {
+        next(value);
+      },
+      getter(key, next) {
+        return next();
+      }
+    })
+    .dispatch('editUser', true)
+    .map();
+  testField(t, result, 'name', test, true);
+  testField(t, result, 'version', test, true);
+  t.equal(result.name.get(), 'John', 'name getter works as expected');
+  result.name.set('Peter');
+  t.equal(result.name.get(), 'Peter', 'buffer works as expected');
+  t.equal(test.$store.state.user.name, 'John', 'and actual value unchanged');
+  result.version.set(result.version.get() + 1);
+  t.equal(test.$store.state.user.name, 'Peter', 'value changed only on trigger value change');
 });
 
 t.test('exposed state target setters  committing with target sending', async t => {

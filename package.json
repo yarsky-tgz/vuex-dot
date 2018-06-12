@@ -1,6 +1,6 @@
 {
   "name": "vuex-dot",
-  "version": "2.4.4",
+  "version": "2.5.0",
   "description": "Simplifies two-way data binding and v-model usage on vuex state, providing full reactivity via generated setters/getters",
   "main": "index.js",
   "scripts": {
@@ -19,11 +19,12 @@
   },
   "homepage": "https://github.com/yarsky-tgz/vuex-dot#readme",
   "devDependencies": {
+    "babel-minify": "^0.4.3",
+    "rollup": "^0.60.1",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup": "^0.60.1",
-    "babel-minify": "^0.4.3",
-    "tap": "^12.0.1"
+    "tap": "^12.0.1",
+    "vuex-dot-buffer": "^1.0.0"
   },
   "dependencies": {
     "get-value": "^3.0.1"

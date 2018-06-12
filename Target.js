@@ -80,7 +80,26 @@ class Target {
    */
   map(alias) {
     if (!alias) return map(this);
-    return { [ alias ]: map(this) };
+    return Object.assign({ [ alias ]: map(this) }, this.inject || {});
+  }
+  
+  /**
+   * apply plugin
+   *
+   * @param {Object} plugin object, describing your plugin.
+   * @return {Target}
+   */
+  use(plugin) {
+    const makeSetterGate = oldGate => !!oldGate ?
+      (key, setter) => function (value) { plugin.setter(key, value, oldGate(key, setter).bind(this)); } :
+      (key, setter) => function (value) { plugin.setter(key, value, setter.bind(this)); };
+    const makeGetterGate = oldGate => !!oldGate ?
+      (key, getter) => function () { return plugin.getter(key, oldGate(key, getter).bind(this)); } :
+      (key, getter) => function () { return plugin.getter(key, getter.bind(this)); };
+    this.gate = makeSetterGate(this.gate);
+    if (!!plugin.getter) this.getterGate = makeGetterGate(this.getterGate);
+    this.inject = Object.assign({}, plugin.inject, this.inject);
+    return this;
   }
 }
 
