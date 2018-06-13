@@ -154,6 +154,7 @@
     };
     const resultGetter = field ? fieldGetter : targetGetter;
     const result = {
+      cache: false,
       get: subject.getterGate ? subject.getterGate(field, resultGetter) : resultGetter
     };
     const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
