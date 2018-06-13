@@ -1,12 +1,13 @@
 {
   "name": "vuex-dot",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Simplifies two-way data binding and v-model usage on vuex state, providing full reactivity via generated setters/getters",
   "main": "index.js",
   "scripts": {
     "test": "tap --coverage test/*.js",
     "build": "rollup -c",
-    "minify": "minify dist/vuex-dot.js -o dist/vuex-dot.min.js"
+    "minify": "minify dist/vuex-dot.js -o dist/vuex-dot.min.js",
+    "doc": "jsdoc2md index.js -f Target.js TargetExposition.js | grep -v \"**Kind**\""
   },
   "repository": {
     "type": "git",

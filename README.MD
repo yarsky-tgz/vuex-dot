@@ -1,14 +1,10 @@
 # vuex-dot [![tests](https://travis-ci.org/yarsky-tgz/vuex-dot.svg?branch=master)](https://travis-ci.org/yarsky-tgz/vuex-dot) [![Coverage Status](https://coveralls.io/repos/github/yarsky-tgz/vuex-dot/badge.svg?branch=master)](https://coveralls.io/github/yarsky-tgz/vuex-dot?branch=master) [![GitHub license](https://img.shields.io/github/license/yarsky-tgz/vuex-dot.svg)](https://github.com/yarsky-tgz/vuex-dot/blob/master/LICENSE) [![minified bundle](https://img.shields.io/github/size/yarsky-tgz/vuex-dot/dist/vuex-dot.min.js.svg)](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js)
 
-[Demo](https://codepen.io/anon/pen/PaWrbe)
+[Codepen demo](https://codepen.io/anon/pen/ERmBBP)
 
-Vue computed properties getters and/or setters generator with the ability to hook each property change and execute callback or even dispatch vuex action.
+Vue computed properties getters and/or setters generator with the ability to intercept each property change and [dispatch](#Target+dispatch) vuex action or [commit](Target+commit) mutation or just [hook](#Target+hook) your own callback. Also you can [use](Target+use) plugins.
 
-The main idea of this tool is to create `mapState()`-like helper with an ability to set additional configuration. That's why Method Chaining used. 
-
-Next difference of `takeState()` from `mapState()` is that you can `take()` (and `map()`) only one value per launch. 
-But if you `take()` a complex value, like object with user data, you can `expose()` **some** fields of it into
-your `computed` properties. It did such way because in complicated situations, like when you are editing an item of arrays and your final mutation need actual item instance, you can send target item to your action. More information: [TargetExposition.dispatch(action, sendTarget)](#TargetExposition+dispatch) 
+The main idea of this tool is to have `mapState()`-like helper with an ability to set additional configuration with chainable methods.
 
 ## Motivation
 
@@ -16,12 +12,12 @@ There are some other packages on github -
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
 [vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
 their docs and sources I've decided to create own package from scratch with such benefits
- * **lightweight** - [3.2KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
+ * **lightweight** - [3.25 KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
  * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities adds to your code one place for handling reactive changes of target. [Plugins](#Target+use) support gives you full control of your data flow.
  * **simple** - less code footprint with same features. You need to import only one helper method into your code, which provides a short set of chainable methods for configuring.
  * **no foreign code injection to your state** - no weird logic ("core" mutations, actions, etc) shall be injected into your vuex store, no additional setup of `vuex` or `vm` needed. This tool just generates getters and setters, which are done with performance in mind. 
  * **dot notation** - with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
- * **plugins support** - you can use 
+ * **plugins support** 
 
 ## Installation
 
@@ -31,9 +27,9 @@ npm i vuex-dot
 
 ## Usage
 
-#### State property two-way binding (mutation based)
+#### State property two way binding (mutation based)
 
-[https://codepen.io/anon/pen/GGraRo](https://codepen.io/anon/pen/GGraRo)
+[https://codepen.io/anon/pen/ERmBqK](https://codepen.io/anon/pen/ERmBqK)
 
 [Target.commit(action)](#Target+commit)
 ```vue
@@ -71,7 +67,7 @@ export default new Vuex.Store({
 
 #### Target selected object fields exposition (action based)
 
-[https://codepen.io/anon/pen/jKyoyZ](https://codepen.io/anon/pen/jKyoyZ)
+[https://codepen.io/anon/pen/eKWqOm](https://codepen.io/anon/pen/eKWqOm)
 
 ```vue
 <template>
@@ -119,7 +115,7 @@ export default new Vuex.Store({
         ])
         .hook(({ dispatch }, value, key) => {
           if(validate.single(value, constraints[key])) {
-            dispatch('userEditAction', {[key]: value});
+            dispatch('userEditAction', { key, value });
           }
         })
         .map()
@@ -137,7 +133,8 @@ export default new Vuex.Store({
 <dd><p>Target mapper</p>
 </dd>
 <dt><a href="#TargetExposition">TargetExposition</a></dt>
-<dd><p>Exposes some properties of target object into computed properties compatible bunch of getters or/and setters</p>
+<dd><p>Exposes some properties of target object into computed properties compatible bunch
+of getters or/and setters</p>
 </dd>
 </dl>
 
@@ -162,10 +159,11 @@ Target mapper
     * [new Target(path)](#new_Target_new)
     * _instance_
         * [.expose(projection)](#Target+expose) ⇒ [<code>TargetExposition</code>](#TargetExposition)
-        * [.commit(action)](#Target+commit) ⇒ [<code>Target</code>](#Target)
+        * [.commit(mutation)](#Target+commit) ⇒ [<code>Target</code>](#Target)
         * [.dispatch(action)](#Target+dispatch) ⇒ [<code>Target</code>](#Target)
         * [.hook(dispatcher)](#Target+hook) ⇒ [<code>Target</code>](#Target)
         * [.map(alias)](#Target+map) ⇒ <code>\*</code>
+        * [.use(plugin)](#Target+use) ⇒ [<code>Target</code>](#Target)
     * _inner_
         * [~dispatcher](#Target..dispatcher) : <code>function</code>
 
@@ -180,35 +178,41 @@ Target mapper
 <a name="Target+expose"></a>
 
 ### target.expose(projection) ⇒ [<code>TargetExposition</code>](#TargetExposition)
-Should be used if you need to map some properties of the object, selected as a target into your computed properties. It allows to attach action dispatcher or hook callback on each property change.
+Should be used if you need to map some properties of the object, selected as a target into your computed properties.
+It allows to attach action dispatcher or hook callback on each property change.
+
 Also, both `dispatch()` and `hook()` can provide object mapped by Target instance to the callee, while setting
-the second argument is true (you can read more in the documentation for them)
+the second argument `true` (you can read more in the documentation for them)
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| projection | <code>array</code> | fields to be exposed |
+| projection | <code>array</code> | `target` object properties to be exposed |
 
 <a name="Target+commit"></a>
 
-### target.commit(action) ⇒ [<code>Target</code>](#Target)
+### target.commit(mutation) ⇒ [<code>Target</code>](#Target)
 In fact, that's syntax sugar for `hook()` method.
-Sets `action` to be dispatched on mapped property change
-`action` shall be called in the format:
 
-`dispatch(action, newValue)`
+Sets `mutation` to be commited on mapped property change
+
+`mutation` shall be called in the format:
+
+`commit(mutation, newValue)`
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| action | <code>string</code> | action name |
+| mutation | <code>string</code> | mutation name |
 
 <a name="Target+dispatch"></a>
 
 ### target.dispatch(action) ⇒ [<code>Target</code>](#Target)
 In fact, that's syntax sugar for `hook()` method.
+
 Sets `action` to be dispatched on mapped property change
-`action` shall be called in the format:
+
+Your `action` shall be called in the format:
 
 `dispatch(action, newValue)`
 
@@ -221,7 +225,6 @@ Sets `action` to be dispatched on mapped property change
 
 ### target.hook(dispatcher) ⇒ [<code>Target</code>](#Target)
 Set hook that should be run on mapped property change.
-Hook shall be run with such arguments
 
 
 | Param | Type |
@@ -232,6 +235,7 @@ Hook shall be run with such arguments
 
 ### target.map(alias) ⇒ <code>\*</code>
 returns computed property pair of getters or/and setters for specified projection.
+
 If an alias is set, it can be used with spread operator setting provided alias as the computed property name
 
 
@@ -242,9 +246,9 @@ If an alias is set, it can be used with spread operator setting provided alias a
 <a name="Target+use"></a>
 
 ### target.use(plugin) ⇒ [<code>Target</code>](#Target)
-apply plugin to target.
+apply plugin
 
-Plugin is described with object, composed in such format: 
+plugin is described by object, composed in such format:
 
 ```javascript
 {
@@ -252,7 +256,7 @@ Plugin is described with object, composed in such format:
     nextSetter(value);
   },
   getter: function(key, nextGetter) { //getter is optional
-    return nextGetter(); 
+    return nextGetter();
   },
   inject: { // optional, here you can describe additional fields, you want to inject into result map
     $internal: {
@@ -263,9 +267,10 @@ Plugin is described with object, composed in such format:
 }
 ```
 
+
 | Param | Type | Description |
 | --- | --- | --- |
-| plugin | <code>Object</code> | Object, describing your plugin |
+| plugin | <code>Object</code> | object, describing your plugin. |
 
 <a name="Target..dispatcher"></a>
 
@@ -279,7 +284,8 @@ Plugin is described with object, composed in such format:
 <a name="TargetExposition"></a>
 
 ## TargetExposition
-Exposes some properties of the target object into bunch of getters or/and setters compatible with computed properties.
+Exposes some properties of target object into computed properties compatible bunch
+of getters or/and setters
 
 
 * [TargetExposition](#TargetExposition)
@@ -289,6 +295,7 @@ Exposes some properties of the target object into bunch of getters or/and setter
         * [.dispatch(action, sendTarget)](#TargetExposition+dispatch) ⇒ [<code>TargetExposition</code>](#TargetExposition)
         * [.hook(dispatcher, sendTarget)](#TargetExposition+hook) ⇒ [<code>TargetExposition</code>](#TargetExposition)
         * [.map()](#TargetExposition+map) ⇒ <code>Object</code>
+        * [.use(plugin)](#TargetExposition+use) ⇒ [<code>TargetExposition</code>](#TargetExposition)
     * _inner_
         * [~dispatcher](#TargetExposition..dispatcher) : <code>function</code>
 
@@ -307,19 +314,19 @@ Exposes some properties of the target object into bunch of getters or/and setter
 Sets `mutation` to be commited on exposed field change
 if `sendTarget` is `false`, `action` shall be called in format:
 
-`commit(mutation, {[key_of_exposed_field]: value})`
+`commit(mutation, { key, value })`
 
 otherwise, if `sendTarget` is set to `true`
 
-`commit(mutation, { target, key, value})`
+`commit(mutation, { target, key, value })`
 
 **Hint**: That's just syntax sugar for `hook()` method.
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| mutation | <code>String</code> |  | name of the mutation |
-| sendTarget | <code>Boolean</code> | <code>false</code> | send target to mutation |
+| mutation | <code>String</code> |  | name of mutation |
+| sendTarget | <code>Boolean</code> | <code>false</code> | send target to action |
 
 <a name="TargetExposition+dispatch"></a>
 
@@ -327,24 +334,24 @@ otherwise, if `sendTarget` is set to `true`
 Sets `action` to be dispatched on exposed field change.
 if `sendTarget` is `false`, `action` shall be called in format:
 
-`dispatch(action, {[key_of_exposed_field]: value})`
+`dispatch(action, { key, value })`
 
 otherwise, if `sendTarget` is set to `true`
 
-`dispatch(action, { target, key, value})`
+`dispatch(action, { target, key, value })`
 
 **Hint**: That's just syntax sugar for `hook()` method.
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| action | <code>String</code> |  | name of the action |
+| action | <code>String</code> |  | name of action |
 | sendTarget | <code>Boolean</code> | <code>false</code> | send target to action |
 
 <a name="TargetExposition+hook"></a>
 
 ### targetExposition.hook(dispatcher, sendTarget) ⇒ [<code>TargetExposition</code>](#TargetExposition)
-set dispatcher callback
+set callback to be run on property change
 
 
 | Param | Type |
@@ -356,6 +363,16 @@ set dispatcher callback
 
 ### targetExposition.map() ⇒ <code>Object</code>
 generates map of getters or/and setters for specified projection
+
+<a name="TargetExposition+use"></a>
+
+### targetExposition.use(plugin) ⇒ [<code>TargetExposition</code>](#TargetExposition)
+look [Target.use(plugin)](#Target+use)
+
+
+| Param |
+| --- |
+| plugin |
 
 <a name="TargetExposition..dispatcher"></a>
 
@@ -388,4 +405,3 @@ returns Target instance with specified state path
 | --- |
 | namespace |
 | path |
-

@@ -18,13 +18,13 @@ class TargetExposition {
   
   /**
    * Sets `mutation` to be commited on exposed field change
-   * if `sendTarget` is `false` `action` shall be called in format:
+   * if `sendTarget` is `false`, `action` shall be called in format:
    *
-   * `commit(mutation, {[key_of_exposed_field]: value})`
+   * `commit(mutation, { key, value })`
    *
    * otherwise, if `sendTarget` is set to `true`
    *
-   * `commit(mutation, { target, key, value})`
+   * `commit(mutation, { target, key, value })`
    *
    * **Hint**: That's just syntax sugar for `hook()` method.
    * @param {String} mutation name of mutation
@@ -38,14 +38,14 @@ class TargetExposition {
   }
   
   /**
-   * Sets `action` to be dispatched on exposed field change
-   * if `sendTarget` is `false` `action` shall be called in format:
+   * Sets `action` to be dispatched on exposed field change.
+   * if `sendTarget` is `false`, `action` shall be called in format:
    *
-   * `dispatch(action, {[key_of_exposed_field]: value})`
+   * `dispatch(action, { key, value })`
    *
    * otherwise, if `sendTarget` is set to `true`
    *
-   * `dispatch(action, { target, key, value})`
+   * `dispatch(action, { target, key, value })`
    *
    * **Hint**: That's just syntax sugar for `hook()` method.
    * @param {String} action name of action
@@ -59,7 +59,8 @@ class TargetExposition {
   }
   
   /**
-   * set dispatcher callback
+   * set callback to be run on property change
+   *
    * @param {TargetExposition~dispatcher} dispatcher
    * @param {Boolean} sendTarget
    * @return {TargetExposition}
@@ -80,6 +81,7 @@ class TargetExposition {
   
   /**
    * generates map of getters or/and setters for specified projection
+   *
    * @return {Object}
    */
   map() {
@@ -93,6 +95,12 @@ class TargetExposition {
     return result;
   }
   
+  /**
+   * look [Target.use(plugin)](#Target+use)
+   *
+   * @param plugin
+   * @return {TargetExposition}
+   */
   use(plugin) {
     this.target.use(plugin);
     return this;
