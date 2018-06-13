@@ -2,7 +2,7 @@
 
 [Codepen demo](https://codepen.io/anon/pen/ERmBBP)
 
-Vue computed properties getters and/or setters generator with the ability to intercept each property change and [dispatch](#Target+dispatch) vuex action or [commit](Target+commit) mutation or just [hook](#Target+hook) your own callback. Also you can [use](Target+use) plugins.
+Vue computed properties getters and/or setters generator with the ability to intercept each property change and [dispatch](#Target+dispatch) vuex action or [commit](#Target+commit) mutation or just [hook](#Target+hook) your own callback. Also you can [use](#Target+use) plugins.
 
 The main idea of this tool is to have `mapState()`-like helper with an ability to set additional configuration with chainable methods.
 
