@@ -6,7 +6,8 @@ export default {
   output: {
     file: 'dist/vuex-dot.js',
     format: 'umd',
-    name: 'vuex-dot'
+    name: 'VuexDot',
+    exports: 'named'
   },
   plugins: [
     nodeResolve({

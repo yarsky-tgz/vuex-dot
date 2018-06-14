@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global['vuex-dot'] = {})));
+  (factory((global.VuexDot = {})));
 }(this, (function (exports) { 'use strict';
 
   /*!
@@ -154,7 +154,6 @@
     };
     const resultGetter = field ? fieldGetter : targetGetter;
     const result = {
-      cache: false,
       get: subject.getterGate ? subject.getterGate(field, resultGetter) : resultGetter
     };
     const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
