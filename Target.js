@@ -10,9 +10,11 @@ class Target {
    */
   constructor(path) {
     this.path = path;
-    this.action = null;
-    this.mutation = null;
-    this.dispatcher = null;
+    // properties:
+    // this.action = undefined;
+    // this.mutation = undefined;
+    // this.dispatcher = undefined;
+    // this.customPayload = undefined
   }
   
   /**
@@ -111,7 +113,9 @@ class Target {
    *       get() { ... },
    *       set(value) { ... }
    *     }
-   *   }
+   *   },
+   *   customPayload: if set to `true` it means that your plugin shall use own payload format, so we do not need to pass
+   *   key to hook (action, commit)
    * }
    * ```
    *
@@ -128,6 +132,7 @@ class Target {
     this.gate = makeSetterGate(this.gate);
     if (!!plugin.getter) this.getterGate = makeGetterGate(this.getterGate);
     this.inject = Object.assign({}, plugin.inject, this.inject);
+    this.customPayload = this.customPayload || plugin.customPayload;
     return this;
   }
 }

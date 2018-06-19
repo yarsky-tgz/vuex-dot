@@ -267,6 +267,36 @@ t.test('exposed state target setters with target sending with buffer and two dum
   t.equal(test.$store.state.user.name, 'Peter', 'value changed only on trigger value change');
 });
 
+t.test('exposed state target setters with target sending with buffer and two dumb plugins usage', async t => {
+  const test = {
+    $store: {
+      dispatch(action, { payload, target }) {
+        t.equal(action, 'editUser', 'right action dispatched');
+        t.equal(payload.name, 'Peter', 'right value passed to action');
+        t.same(target, test.$store.state.user, 'right target passed');
+      },
+      state: {
+        user: {
+          name: 'John'
+        }
+      }
+    },
+  };
+  const result = takeState('user')
+    .expose(['name'])
+    .use({
+      setter(key, value, next) {
+        next({ [ key ]: value });
+      },
+      customPayload: true
+    })
+    .dispatch('editUser', true)
+    .map();
+  testField(t, result, 'name', test, true);
+  result.name.set('Peter');
+});
+
+
 t.test('exposed state target setters  committing with target sending', async t => {
   const test = {
     $store: {

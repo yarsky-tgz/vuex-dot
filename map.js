@@ -4,21 +4,26 @@ const dot = require('get-value');
  * @param {Target,TargetExposition} subject
  * @param {String} field
  * @param {Boolean} sendTarget send
- * @return {{get: (function(): *), set: (function(): *)}}
+ * @return {*}
  */
 function map(subject, field, sendTarget) {
+  const omitKey = !field || !!subject.customPayload;
   const composeSetter = () =>
-    field ?
-      sendTarget ?
+    sendTarget ?
+      omitKey ?
+        function (value) {
+          subject.dispatcher.call(this, this.$store, value, targetGetter.call(this));
+        } :
         function (value) {
           subject.dispatcher.call(this, this.$store, value, field, targetGetter.call(this));
         } :
+      omitKey ?
+        function (value) {
+          subject.dispatcher.call(this, this.$store, value);
+        } :
         function (value) {
           subject.dispatcher.call(this, this.$store, value, field);
-        } :
-      function (value) {
-        subject.dispatcher.call(this, this.$store, value);
-      };
+        };
   const fieldGetter = function () {
     return dot(this, subject.path + '.' + field);
   };
@@ -32,11 +37,13 @@ function map(subject, field, sendTarget) {
   const method = !!subject.action ? 'dispatch' : !!subject.mutation ? 'commit' : null;
   const storeAction = !!subject.action ? subject.action : !!subject.mutation ? subject.mutation : null;
   if (!!method) subject.hook(
-    field ?
-      sendTarget ?
-        (store, value, key, target) => store[method](storeAction, { target, key, value }) : // target sending requested
-        (store, value, key) => store[method](storeAction, { key, value }) : // not requested
-      (store, value) => store[method](storeAction, value)); // just single instance dot-notated property mapped
+    sendTarget ?
+      omitKey ?
+        (store, payload, target) => store[method](storeAction, { target, payload }) :
+        (store, value, key, target) => store[method](storeAction, { target, key, value }) :
+      omitKey ?
+        (store, value) => store[method](storeAction, value) :
+        (store, value, key) => store[method](storeAction, { key, value }));
   if (subject.dispatcher) result.set = subject.gate ? subject.gate(field, composeSetter()) : composeSetter();
   return result;
 }

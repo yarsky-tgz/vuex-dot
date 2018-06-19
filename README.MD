@@ -4,7 +4,7 @@
 
 Vue computed properties getters and/or setters generator with the ability to intercept each property change and [dispatch](#Target+dispatch) vuex action or [commit](#Target+commit) mutation or just [hook](#Target+hook) your own callback. Also you can [use](#Target+use) plugins.
 
-The main idea of this tool is to have `mapState()`-like helper with an ability to set additional configuration with chainable methods.
+The main idea of this tool is to have `mapState()`-like helper with an ability to set additional configuration using chainable methods.
 
 ## Motivation
 
@@ -12,12 +12,11 @@ There are some other packages on github -
 [vuex-map-fields](https://github.com/maoberlehner/vuex-map-fields) and
 [vuex-bound](https://github.com/Vanilla-IceCream/vuex-bound) for example, but after reading 
 their docs and sources I've decided to create own package from scratch with such benefits
- * **lightweight** - [3.25 KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
+ * **lightweight** - [3.41 KB](https://unpkg.com/vuex-dot@2.4.0/dist/vuex-dot.min.js) after rollup && babel-minify
  * **flexible** - actions [dispatching](#Target+dispatch) and [hooks](#Target+dispatch) abilities adds to your code one place for handling reactive changes of target. [Plugins](#Target+use) support gives you full control of your data flow.
  * **simple** - less code footprint with same features. You need to import only one helper method into your code, which provides a short set of chainable methods for configuring.
  * **no foreign code injection to your state** - no weird logic ("core" mutations, actions, etc) shall be injected into your vuex store, no additional setup of `vuex` or `vm` needed. This tool just generates getters and setters, which are done with performance in mind. 
  * **dot notation** - with usage of very fast and well tested library [get-value](https://github.com/jonschlinkert/get-value)
- * **plugins support** 
 
 ## Installation
 
